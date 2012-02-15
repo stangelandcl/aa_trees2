@@ -33,7 +33,9 @@ void aa_init (struct aa_tree *tree, aa_cmp cmp_fun);
 
 // time: O(log n), stack space: O(log n)
 
-struct aa_elem *aa_insert (struct aa_tree *tree, struct aa_elem *e);
+struct aa_elem *aa_insert (struct aa_tree *tree,
+                           struct aa_elem *e,
+                           bool            replace);
 struct aa_elem *aa_remove (struct aa_tree *tree, struct aa_elem *e);
 
 // time: O(log n), stack space: O(1)

@@ -51,6 +51,7 @@ aa_init (struct aa_tree *tree, aa_cmp cmp_fun)
 static struct aa_elem *
 aa_insert_ (struct aa_elem  *node,
             struct aa_elem  *datum,
+            bool             replace,
             struct aa_tree  *tree,
             struct aa_elem **result)
 {
@@ -65,14 +66,16 @@ aa_insert_ (struct aa_elem  *node,
   int cmp_result = tree->cmp_fun (datum, node, tree);
   if (cmp_result < 0)
     {
-      struct aa_elem *t = aa_insert_ (node->left, datum, tree, result);
+      struct aa_elem *t;
+      t = aa_insert_ (node->left, datum, replace, tree, result);
       if (!t)
         return NULL;
       node->left = t;
     }
   else if (cmp_result > 0)
     {
-      struct aa_elem *t = aa_insert_ (node->right, datum, tree, result);
+      struct aa_elem *t;
+      t = aa_insert_ (node->right, datum, replace, tree, result);
       if (!t)
         return NULL;
       node->right = t;
@@ -80,19 +83,27 @@ aa_insert_ (struct aa_elem  *node,
   else
     {
       *result = node;
+      if (replace)
+        {
+          *datum = *node;
+          return datum;
+        }
       return NULL;
     }
 
-  skew (node);
-  split (node);
+  if (!*result)
+    {
+      skew (node);
+      split (node);
+    }
   return node;
 }
 
 struct aa_elem *
-aa_insert (struct aa_tree *tree, struct aa_elem *datum)
+aa_insert (struct aa_tree *tree, struct aa_elem *datum, bool replace)
 {
   struct aa_elem *result;
-  struct aa_elem *t = aa_insert_ (tree->root, datum, tree, &result);
+  struct aa_elem *t = aa_insert_ (tree->root, datum, replace, tree, &result);
   if (t)
     tree->root = t;
   return result;
@@ -146,8 +157,8 @@ aa_remove_ (struct aa_elem  *t,
       is_bottom = t->right == NIL;
       if (!is_bottom)
         {
-          struct aa_elem *v = aa_remove_ (t->right, datum, deletee, tree,
-                                          result);
+          struct aa_elem *v;
+          v = aa_remove_ (t->right, datum, deletee, tree, result);
           if (cmp_result == 0)
             {
               t = *deletee;
@@ -163,9 +174,7 @@ aa_remove_ (struct aa_elem  *t,
         return t;
 
       struct aa_elem *v = t->right;
-      t->left = (**deletee).left;
-      t->right = (**deletee).right;
-      t->level = (**deletee).level;
+      *t = **deletee;
       *deletee = t;
       return v;
     }
