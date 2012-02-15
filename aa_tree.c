@@ -191,7 +191,7 @@ aa_remove (struct aa_tree *tree, struct aa_elem *datum)
   return result;
 }
 
-bool
+static bool
 aa_foreach_ (struct aa_elem *node, aa_action action, void *aux)
 {
   return node == NIL ||
