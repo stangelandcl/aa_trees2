@@ -33,9 +33,35 @@ void aa_init (struct aa_tree *tree, aa_cmp cmp_fun);
 
 // time: O(log n), stack space: O(log n)
 
-struct aa_elem *aa_insert (struct aa_tree *tree,
-                           struct aa_elem *e,
-                           bool            replace);
+enum aa_insert_mode
+{
+  AA_INSERT_NEW,
+  AA_REPLACE_ONLY,
+  AA_INSERT_OR_REPLACE
+};
+
+struct aa_elem *aa_insert2 (struct aa_tree      *tree,
+                            struct aa_elem      *e,
+                            enum aa_insert_mode  mode);
+
+static inline struct aa_elem *
+aa_insert (struct aa_tree *tree, struct aa_elem *e)
+{
+  return aa_insert2 (tree, e, AA_INSERT_NEW);
+}
+
+static inline struct aa_elem *
+aa_replace (struct aa_tree *tree, struct aa_elem *e)
+{
+  return aa_insert2 (tree, e, AA_REPLACE_ONLY);
+}
+
+static inline struct aa_elem *
+aa_insert_or_replace (struct aa_tree *tree, struct aa_elem *e)
+{
+  return aa_insert2 (tree, e, AA_INSERT_OR_REPLACE);
+}
+
 struct aa_elem *aa_remove (struct aa_tree *tree, struct aa_elem *e);
 
 // time: O(log n), stack space: O(1)

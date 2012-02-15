@@ -49,15 +49,17 @@ aa_init (struct aa_tree *tree, aa_cmp cmp_fun)
 }
 
 static struct aa_elem *
-aa_insert_ (struct aa_elem  *node,
-            struct aa_elem  *datum,
-            bool             replace,
-            struct aa_tree  *tree,
-            struct aa_elem **result)
+aa_insert_ (struct aa_elem       *node,
+            struct aa_elem       *datum,
+            enum aa_insert_mode   mode,
+            struct aa_tree       *tree,
+            struct aa_elem      **result)
 {
   if (node == NIL)
     {
       *result = NULL;
+      if (mode == AA_REPLACE_ONLY)
+        return NULL;
       datum->level = 1;
       datum->left = datum->right = NIL;
       return datum;
@@ -67,7 +69,7 @@ aa_insert_ (struct aa_elem  *node,
   if (cmp_result < 0)
     {
       struct aa_elem *t;
-      t = aa_insert_ (node->left, datum, replace, tree, result);
+      t = aa_insert_ (node->left, datum, mode, tree, result);
       if (!t)
         return NULL;
       node->left = t;
@@ -75,7 +77,7 @@ aa_insert_ (struct aa_elem  *node,
   else if (cmp_result > 0)
     {
       struct aa_elem *t;
-      t = aa_insert_ (node->right, datum, replace, tree, result);
+      t = aa_insert_ (node->right, datum, mode, tree, result);
       if (!t)
         return NULL;
       node->right = t;
@@ -83,12 +85,10 @@ aa_insert_ (struct aa_elem  *node,
   else
     {
       *result = node;
-      if (replace)
-        {
-          *datum = *node;
-          return datum;
-        }
-      return NULL;
+      if (mode == AA_INSERT_NEW)
+        return NULL;
+      *datum = *node;
+      return datum;
     }
 
   if (*result)
@@ -100,10 +100,12 @@ aa_insert_ (struct aa_elem  *node,
 }
 
 struct aa_elem *
-aa_insert (struct aa_tree *tree, struct aa_elem *datum, bool replace)
+aa_insert2 (struct aa_tree      *tree,
+            struct aa_elem      *datum,
+            enum aa_insert_mode  mode)
 {
   struct aa_elem *result;
-  struct aa_elem *t = aa_insert_ (tree->root, datum, replace, tree, &result);
+  struct aa_elem *t = aa_insert_ (tree->root, datum, mode, tree, &result);
   if (t)
     tree->root = t;
   return result;
