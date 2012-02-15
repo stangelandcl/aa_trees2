@@ -1,3 +1,8 @@
+/*
+ * AUTHOR:  2012  René Kijewski  (rene.<surname>@fu-berlin.de)
+ * LICENSE: MIT  (http://www.opensource.org/licenses/mit-license.php)
+ */
+
 #include "aa_tree.h"
 #include <stdbool.h>
 

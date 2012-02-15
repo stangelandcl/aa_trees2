@@ -1,3 +1,8 @@
+/*
+ * AUTHOR:  2012  René Kijewski  (rene.<surname>@fu-berlin.de)
+ * LICENSE: MIT  (http://www.opensource.org/licenses/mit-license.php)
+ */
+
 #ifndef AA_TREE_H__
 #define AA_TREE_H__
 
