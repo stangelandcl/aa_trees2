@@ -91,11 +91,11 @@ aa_insert_ (struct aa_elem  *node,
       return NULL;
     }
 
-  if (!*result)
-    {
-      skew (node);
-      split (node);
-    }
+  if (*result)
+    return NULL;
+
+  skew (node);
+  split (node);
   return node;
 }
 
