@@ -6,8 +6,6 @@
 // Compile:
 // gcc -O3 word_count.c ../aa_tree.c
 
-#define _XOPEN_SOURCE
-
 #include "../aa_tree.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -75,7 +73,7 @@ main (int argc, char **argv)
   if (argc > 1)
     input = fopen (argv[1], "r");
   else
-    input = fdopen (1, "r");
+    input = stdin;
 
   struct aa_tree tree1, tree2;
   aa_init (&tree1, cmp1);
